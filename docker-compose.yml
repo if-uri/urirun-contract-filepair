@@ -2,7 +2,11 @@
 # `docker compose up --build --abort-on-container-exit --exit-code-from orchestrator`
 services:
   producer:
-    build: { context: ., dockerfile: packages/producer/Dockerfile }
+    build:
+      context: .
+      dockerfile: packages/producer/Dockerfile
+      additional_contexts:
+        urirun_contract_src: ../urirun-contract
     environment: { PORT: "8801", CONTRACTS: /app/contracts.json }
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://localhost:8801/health')"]
@@ -11,7 +15,11 @@ services:
       retries: 10
 
   consumer:
-    build: { context: ., dockerfile: packages/consumer/Dockerfile }
+    build:
+      context: .
+      dockerfile: packages/consumer/Dockerfile
+      additional_contexts:
+        urirun_contract_src: ../urirun-contract
     environment: { PORT: "8802", CONTRACTS: /app/contracts.json }
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://localhost:8802/health')"]
@@ -29,7 +37,11 @@ services:
       retries: 10
 
   orchestrator:
-    build: { context: ., dockerfile: orchestrator/Dockerfile }
+    build:
+      context: .
+      dockerfile: orchestrator/Dockerfile
+      additional_contexts:
+        urirun_contract_src: ../urirun-contract
     environment:
       PRODUCER_URL: http://producer:8801
       CONSUMER_URL: http://consumer:8802
